@@ -22,7 +22,7 @@ def test_jwt():
 def test_jwt_invalid_token(client: TestClient, user: User):
 
     response = client.delete(
-        '/delete_user/1', headers={'Authorization': 'Bearer invalid-token'}
+        '/users/1', headers={'Authorization': 'Bearer invalid-token'}
     )
 
     assert response.status_code == HTTPStatus.UNAUTHORIZED
@@ -34,7 +34,7 @@ def test_jwt_without_email(client: TestClient, user: User):
     token = create_access_token({'sub': ''})
 
     response = client.delete(
-        '/delete_user/1', headers={'Authorization': f'Bearer {token}'}
+        '/users/1', headers={'Authorization': f'Bearer {token}'}
     )
 
     assert response.status_code == HTTPStatus.UNAUTHORIZED
@@ -46,7 +46,7 @@ def test_jwt_non_existent_user(client: TestClient, user: User):
     token = create_access_token({'sub': 'carlos@teste.com'})
 
     response = client.delete(
-        '/delete_user/1', headers={'Authorization': f'Bearer {token}'}
+        '/users/1', headers={'Authorization': f'Bearer {token}'}
     )
 
     assert response.status_code == HTTPStatus.UNAUTHORIZED

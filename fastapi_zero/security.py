@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from http import HTTPStatus
+from typing import Annotated
 from zoneinfo import ZoneInfo
 
 from fastapi import Depends, HTTPException
@@ -13,13 +14,16 @@ from fastapi_zero.database import get_session
 from fastapi_zero.models import User
 from fastapi_zero.settings import Settings
 
-oauth2_schema = OAuth2PasswordBearer(tokenUrl='token')
+oauth2_schema = OAuth2PasswordBearer(tokenUrl='auth/token')
 pwd_context = PasswordHash.recommended()
 
 settings = Settings()
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = int(settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+
+AnnotatedSession = Annotated[Session, Depends(get_session)]
+AnnotatedToken = Annotated[str, Depends(oauth2_schema)]
 
 
 def get_password_hash(password: str):
@@ -46,8 +50,8 @@ def create_access_token(data: dict):
 
 
 def get_current_user(
-    session: Session = Depends(get_session),
-    token: str = Depends(oauth2_schema),
+    session: AnnotatedSession,
+    token: AnnotatedToken,
 ):
     credentials_exception = HTTPException(
         status_code=HTTPStatus.UNAUTHORIZED,
