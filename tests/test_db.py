@@ -1,11 +1,12 @@
 from dataclasses import asdict
 
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from fastapi_zero.models import User
 
 
-def test_create_user(session, mock_db_time):
+def test_create_user(session: Session, mock_db_time):
     with mock_db_time(model=User) as time:
         new_user = User(
             username='test', email='test@example.com', password='secret123'
