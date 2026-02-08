@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 from datetime import datetime
 
+import factory
 import pytest_asyncio
 from fastapi.testclient import TestClient
 from sqlalchemy import event
@@ -70,11 +71,23 @@ async def user(session: AsyncSession):
 
     password = 'string'
 
-    fake_user = User(
-        username='Pablo',
-        email='test@example.com',
-        password=get_password_hash(password),
-    )
+    fake_user = UserFactory(password=get_password_hash(password))
+
+    session.add(fake_user)
+    await session.commit()
+    await session.refresh(fake_user)
+
+    fake_user._clean_password = password
+
+    return fake_user
+
+
+@pytest_asyncio.fixture
+async def other_user(session: AsyncSession):
+
+    password = 'string'
+
+    fake_user = UserFactory(password=get_password_hash(password))
 
     session.add(fake_user)
     await session.commit()
@@ -103,3 +116,12 @@ def settings():
     settings = Settings()
 
     return settings
+
+
+class UserFactory(factory.Factory):
+    class Meta:
+        model = User
+
+    username = factory.Sequence(lambda n: f'test{n}')
+    email = factory.LazyAttribute(lambda obj: f'{obj.username}@test.com')
+    password = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')
