@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from datetime import datetime
 
 import factory
+import factory.fuzzy
 import pytest_asyncio
 from fastapi.testclient import TestClient
 from sqlalchemy import event
@@ -10,7 +11,7 @@ from sqlalchemy.pool import StaticPool
 
 from fastapi_zero.app import app
 from fastapi_zero.database import get_session
-from fastapi_zero.models import User, table_registry
+from fastapi_zero.models import Todo, TodoState, User, table_registry
 from fastapi_zero.security import get_password_hash
 from fastapi_zero.settings import Settings
 
@@ -46,19 +47,25 @@ async def session():
 
 
 @contextmanager
-def _mock_db_time(model, time=datetime(2026, 1, 31)):
+def _mock_db_time(model, time=datetime(2026, 1, 14)):
 
-    def fake_time_hook(mapper, connection, target):
+    def fake_time_created_at_hook(mapper, connection, target):
         if hasattr(target, 'created_at'):
             target.created_at = time
         if hasattr(target, 'updated_at'):
             target.updated_at = time
 
-    event.listen(model, 'before_insert', fake_time_hook)
+    def fake_time_updated_at_hook(mapper, connection, target):
+        if hasattr(target, 'updated_at'):
+            target.updated_at = time
+
+    event.listen(model, 'before_insert', fake_time_created_at_hook)
+    event.listen(model, 'before_update', fake_time_updated_at_hook)
 
     yield time
 
-    event.remove(model, 'before_insert', fake_time_hook)
+    event.remove(model, 'before_update', fake_time_updated_at_hook)
+    event.remove(model, 'before_insert', fake_time_created_at_hook)
 
 
 @pytest_asyncio.fixture
@@ -85,7 +92,7 @@ async def user(session: AsyncSession):
 @pytest_asyncio.fixture
 async def other_user(session: AsyncSession):
 
-    password = 'string'
+    password = 'string12'
 
     fake_user = UserFactory(password=get_password_hash(password))
 
@@ -125,3 +132,13 @@ class UserFactory(factory.Factory):
     username = factory.Sequence(lambda n: f'test{n}')
     email = factory.LazyAttribute(lambda obj: f'{obj.username}@test.com')
     password = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')
+
+
+class TodoFactory(factory.Factory):
+    class Meta:
+        model = Todo
+
+    title = factory.Faker('text', max_nb_chars=100)
+    description = factory.Faker('text')
+    state = factory.fuzzy.FuzzyChoice(TodoState)
+    user_id = 1

@@ -4,7 +4,8 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from fastapi_zero.models import User
+from fastapi_zero.models import Todo, User
+from tests.conftest import TodoFactory
 
 
 @pytest.mark.asyncio
@@ -26,6 +27,20 @@ async def test_create_user(session: AsyncSession, mock_db_time):
         'username': 'test',
         'email': 'test@example.com',
         'password': 'secret123',
+        'todos': [],
         'created_at': time,
         'updated_at': time,
     }
+
+
+@pytest.mark.asyncio
+async def test_enum_state_error(
+    user: User, session: AsyncSession, mock_db_time
+):
+    with mock_db_time(model=Todo):
+        todo = TodoFactory(user_id=user.id, state='not_found')
+        session.add(todo)
+        await session.commit()
+
+        with pytest.raises(LookupError):
+            await session.scalar(select(Todo).where(Todo.id == todo.id))

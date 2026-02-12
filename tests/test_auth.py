@@ -73,8 +73,8 @@ def test_token_expired_after_time(client: TestClient, user: User):
 
 
 def test_token_expired_after_time_in_refresh_token(
-        client: TestClient, user: User
-    ):
+    client: TestClient, user: User
+):
     with freeze_time('2026-01-14 12:00:00'):
         response = client.post(
             '/auth/token',

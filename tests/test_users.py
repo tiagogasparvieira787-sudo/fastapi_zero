@@ -6,6 +6,7 @@ from fastapi_zero.models import User
 from fastapi_zero.schemas import UserPublic
 
 
+# ------- Routes --------
 def test_create_user(client: TestClient):
 
     response = client.post(
@@ -43,12 +44,12 @@ def test_update_user(
 ):
 
     response = client.put(
-        '/users/1',
+        f'/users/{user.id}',
         headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'Pablo',
             'email': 'random@example.com',
-            'password': '1234',
+            'password': '12345678',
         },
     )
 
@@ -58,6 +59,39 @@ def test_update_user(
         'username': 'Pablo',
         'email': 'random@example.com',
     }
+
+
+def test_delete_user(
+    client: TestClient,
+    user: User,
+    token: str,
+):
+
+    response = client.delete(
+        '/users/1', headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {'message': 'User deleted'}
+
+
+# ------- Exceptions --------
+def test_create_integrity_error(
+    client: TestClient,
+    other_user: User,
+    token: str,
+):
+    response = client.post(
+        '/users/',
+        json={
+            'username': other_user.username,
+            'email': other_user.email,
+            'password': other_user._clean_password,
+        },
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {'detail': 'Username or Email already exists!'}
 
 
 def test_update_integrity_error(
@@ -73,7 +107,7 @@ def test_update_integrity_error(
         json={
             'username': other_user.username,
             'email': 'john@example.com',
-            'password': 'idk123',
+            'password': 'idk12345',
         },
     )
 
@@ -91,26 +125,12 @@ def test_update_user_with_wrong_user(
         json={
             'username': 'joao',
             'email': 'eu@example.com',
-            'password': '1234',
+            'password': '12345678',
         },
     )
 
     assert response.status_code == HTTPStatus.FORBIDDEN
     assert response.json() == {'detail': 'Not enough permissions!'}
-
-
-def test_delete_user(
-    client: TestClient,
-    user: User,
-    token: str,
-):
-
-    response = client.delete(
-        '/users/1', headers={'Authorization': f'Bearer {token}'}
-    )
-
-    assert response.status_code == HTTPStatus.OK
-    assert response.json() == {'message': 'User deleted'}
 
 
 def test_delete_user_wrong_user(
