@@ -4,18 +4,21 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     steps:
+      - name: Copia os arquivos do repositório
+        uses: actions/checkout@v4
+
       - name: Instalar o Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-      
-      - name: Instalar o uv
-        run: pipx install uv
-      
-      - name: Instalar as dependências
-        run: uv install
+          python-version: "3.12"
+
+      - name: Instalar uv
+        run: python -m pip install uv
+
+      - name: Instalar dependências
+        run: uv sync --dev
 
       - name: Executar os testes
         run: uv run task test
