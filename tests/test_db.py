@@ -2,6 +2,7 @@ from dataclasses import asdict
 
 import pytest
 from sqlalchemy import select
+from sqlalchemy.exc import DataError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi_zero.models import Todo, User
@@ -40,7 +41,6 @@ async def test_enum_state_error(
     with mock_db_time(model=Todo):
         todo = TodoFactory(user_id=user.id, state='not_found')
         session.add(todo)
-        await session.commit()
 
-        with pytest.raises(LookupError):
-            await session.scalar(select(Todo).where(Todo.id == todo.id))
+        with pytest.raises(DataError):
+            await session.commit()
