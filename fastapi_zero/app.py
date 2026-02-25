@@ -12,12 +12,12 @@ if sys.platform == 'win32':  # pragma: no cover
 
 app = FastAPI(
     title="API FastZero",
-    openapi_tags = [
+    openapi_tags=[
         {"name": "auth", "description": "Login e refresh de token"},
         {"name": "users", "description": "Gestão de utilizadores"},
         {"name": "todos", "description": "Gestão de tarefas"},
     ],
-    swagger_ui_init_oauth = {
+    swagger_ui_init_oauth={
         "clientId": "meu-client-id",
         "appName": "FastZero Docs",
         "usePkceWithAuthorizationCodeGrant": True,
