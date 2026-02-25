@@ -20,6 +20,9 @@ jobs:
       - name: Instalar dependências
         run: uv sync --dev
 
+      - name: Executar o linter
+        run: uv run task lint
+
       - name: Executar os testes
         run: uv run task test
     
