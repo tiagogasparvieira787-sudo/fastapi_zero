@@ -9,5 +9,7 @@ RUN pip install --no-cache-dir uv
 
 COPY . .
 RUN uv venv --clear .venv && uv pip install --python .venv/bin/python .
+RUN chmod +x entrypoint.sh
 
 EXPOSE 8000
+CMD [ "./entrypoint.sh" ]

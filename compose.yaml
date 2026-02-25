@@ -1,6 +1,6 @@
 services:
   fastzero_database:
-    image: postgres
+    image: postgres:16
     environment:
       POSTGRES_USER: app_fast
       POSTGRES_PASSWORD: tiago1408
@@ -11,7 +11,7 @@ services:
       - pgdata:/var/lib/postgresql/data
   fastzero_app:
     image: fastapi_zero
-    entrypoint: ["sh", "/app/entrypoint.sh"]
+    entrypoint: ["sh", "/app/entrypoint.sh"] # Sobrescreve o entrypoint do dockerfile
     build: .
     ports:
       - "8000:8000"
