@@ -11,10 +11,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from testcontainers.postgres import PostgresContainer
 
 from fastapi_zero.app import app
-from fastapi_zero.database import get_session
-from fastapi_zero.models import Todo, TodoState, User, table_registry
-from fastapi_zero.security import get_password_hash
-from fastapi_zero.settings import Settings
+from fastapi_zero.core.security import get_password_hash
+from fastapi_zero.core.settings import Settings
+from fastapi_zero.db.database import get_session
+from fastapi_zero.db.models import Todo, TodoState, User, table_registry
 
 
 @pytest_asyncio.fixture

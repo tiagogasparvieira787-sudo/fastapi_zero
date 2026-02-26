@@ -6,18 +6,18 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from fastapi_zero.database import get_session
-from fastapi_zero.models import User
-from fastapi_zero.schemas import (
-    FilterPage,
+from fastapi_zero.core.security import (
+    get_current_user,
+    get_password_hash,
+)
+from fastapi_zero.db.database import get_session
+from fastapi_zero.db.models import User
+from fastapi_zero.schemas.querie import FilterPage
+from fastapi_zero.schemas.users import (
     MessageSchema,
     UserList,
     UserPublic,
     UserSchema,
-)
-from fastapi_zero.security import (
-    get_current_user,
-    get_password_hash,
 )
 
 router = APIRouter(prefix='/users', tags=['users'])

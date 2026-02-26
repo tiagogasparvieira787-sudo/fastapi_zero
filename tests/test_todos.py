@@ -5,7 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from fastapi_zero.models import Todo, User
+from fastapi_zero.db.models import Todo, User
 from tests.conftest import TodoFactory
 
 

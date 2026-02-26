@@ -180,3 +180,10 @@ pyrightconfig.json
 
 # Generated using ignr.py - github.com/Antrikshy/ignr.py
 
+# Project-specific
+.uv-cache/
+fastapi_zero.egg-info/
+.vscode/
+
+# Keep template env in git
+!.env.example

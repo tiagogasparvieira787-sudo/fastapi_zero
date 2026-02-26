@@ -3,8 +3,12 @@ from http import HTTPStatus
 from fastapi.testclient import TestClient
 from jwt import decode
 
-from fastapi_zero.models import User
-from fastapi_zero.security import ALGORITHM, SECRET_KEY, create_access_token
+from fastapi_zero.core.security import (
+    ALGORITHM,
+    SECRET_KEY,
+    create_access_token,
+)
+from fastapi_zero.db.models import User
 
 
 def test_jwt():

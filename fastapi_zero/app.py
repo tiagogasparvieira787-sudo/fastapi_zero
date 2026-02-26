@@ -4,24 +4,20 @@ from http import HTTPStatus
 
 from fastapi import FastAPI
 
-from fastapi_zero.routers import auth, todos, users
-from fastapi_zero.schemas import MessageSchema
+from fastapi_zero.core import auth
+from fastapi_zero.routers import todos, users
+from fastapi_zero.schemas.users import MessageSchema
 
 if sys.platform == 'win32':  # pragma: no cover
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 app = FastAPI(
-    title="API FastZero",
+    title='API FastZero',
     openapi_tags=[
-        {"name": "auth", "description": "Login e refresh de token"},
-        {"name": "users", "description": "Gestão de utilizadores"},
-        {"name": "todos", "description": "Gestão de tarefas"},
+        {'name': 'auth', 'description': 'Login e refresh de token'},
+        {'name': 'users', 'description': 'Gestão de utilizadores'},
+        {'name': 'todos', 'description': 'Gestão de tarefas'},
     ],
-    swagger_ui_init_oauth={
-        "clientId": "meu-client-id",
-        "appName": "FastZero Docs",
-        "usePkceWithAuthorizationCodeGrant": True,
-    }
 )
 
 app.include_router(users.router)

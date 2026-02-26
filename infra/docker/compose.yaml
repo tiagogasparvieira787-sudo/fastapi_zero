@@ -1,0 +1,29 @@
+services:
+  fastzero_database:
+    image: postgres:16
+    env_file:
+      - ../../.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  fastzero_app:
+    image: fastapi_zero
+    entrypoint: ["sh", "/app/infra/docker/entrypoint.sh"] # Sobrescreve o entrypoint do dockerfile
+    build: .
+    env_file:
+      - ../../.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - fastzero_database
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@fastzero_database:5432/${POSTGRES_DB}
+
+volumes:
+  pgdata:
+

@@ -2,8 +2,8 @@ from http import HTTPStatus
 
 from fastapi.testclient import TestClient
 
-from fastapi_zero.models import User
-from fastapi_zero.schemas import UserPublic
+from fastapi_zero.db.models import User
+from fastapi_zero.schemas.users import UserPublic
 
 
 # ------- Routes --------

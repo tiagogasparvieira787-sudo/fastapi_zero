@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi.testclient import TestClient
 from freezegun import freeze_time
 
-from fastapi_zero.models import User
+from fastapi_zero.db.models import User
 
 
 def test_get_token(client: TestClient, user: User):

@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import DataError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from fastapi_zero.models import Todo, User
+from fastapi_zero.db.models import Todo, User
 from tests.conftest import TodoFactory
 
 
